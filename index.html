@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Portal</title>
+    <link rel="stylesheet" href="./Style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Interview Portal</h1>
+            <p class="subtitle">Your next-generation interview experience</p>
+        </header>
+
+        <div class="grid">
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-container">
+                    <video id="videoElement" autoplay playsinline></video>
+                    <div id="placeholderIcon" class="placeholder-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 7l-7 5 7 5V7z"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button id="cameraBtn" class="control-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                    </button>
+                    <button id="micBtn" class="control-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <div class="chat-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <h2>Interview Chat</h2>
+                </div>
+                <div id="messagesContainer" class="messages"></div>
+                <form id="messageForm" class="message-form">
+                    <input type="text" id="messageInput" placeholder="Type your message...">
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Interview Status -->
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Interview in progress</span>
+            </div>
+            <button class="close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script >
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const videoElement = document.getElementById('videoElement');
+            const placeholderIcon = document.getElementById('placeholderIcon');
+            const cameraBtn = document.getElementById('cameraBtn');
+            const micBtn = document.getElementById('micBtn');
+            const messageForm = document.getElementById('messageForm');
+            const messageInput = document.getElementById('messageInput');
+            const messagesContainer = document.getElementById('messagesContainer');
+        
+            // State
+            let mediaStream = null;
+            let isCameraOn = false;
+            let isMicOn = false;
+        
+            // Check initial device permissions
+            async function checkDevicePermissions() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const hasCamera = devices.some(device => device.kind === 'videoinput');
+                    const hasMic = devices.some(device => device.kind === 'audioinput');
+        
+                    if (!hasCamera) {
+                        showAlert('No camera detected on your device!', 'error');
+                    }
+                    if (!hasMic) {
+                        showAlert('No microphone detected on your device!', 'error');
+                    }
+                } catch (err) {
+                    showAlert('Error checking device permissions: ' + err.message, 'error');
+                }
+            }
+        
+            // Custom alert function
+            function showAlert(message, type = 'info') {
+                const alertElement = document.createElement('div');
+                alertElement.className = `alert alert-${type}`;
+                alertElement.textContent = message;
+                
+                document.body.appendChild(alertElement);
+                
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                    alertElement.classList.add('fade-out');
+                    setTimeout(() => {
+                        document.body.removeChild(alertElement);
+                    }, 300);
+                }, 3000);
+            }
+        
+            // Camera toggle
+            async function toggleCamera() {
+                try {
+                    if (!isCameraOn) {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        videoElement.srcObject = stream;
+                        mediaStream = stream;
+                        isCameraOn = true;
+                        cameraBtn.classList.add('active');
+                        placeholderIcon.style.display = 'none';
+                        videoElement.style.display = 'block';
+                        showAlert('Camera turned on successfully!', 'success');
+                    } else {
+                        if (mediaStream) {
+                            mediaStream.getTracks().forEach(track => track.stop());
+                        }
+                        videoElement.srcObject = null;
+                        isCameraOn = false;
+                        cameraBtn.classList.remove('active');
+                        placeholderIcon.style.display = 'flex';
+                        videoElement.style.display = 'none';
+                        showAlert('Camera turned off', 'info');
+                    }
+                } catch (err) {
+                    showAlert('Unable to access camera. Please check permissions.', 'error');
+                    console.error('Error accessing camera:', err);
+                }
+            }
+        
+            // Microphone toggle
+            async function toggleMic() {
+                try {
+                    if (!isMicOn) {
+                        await navigator.mediaDevices.getUserMedia({ audio: true });
+                        isMicOn = true;
+                        micBtn.classList.add('active');
+                        showAlert('Microphone turned on successfully!', 'success');
+                    } else {
+                        isMicOn = false;
+                        micBtn.classList.remove('active');
+                        showAlert('Microphone turned off', 'info');
+                    }
+                } catch (err) {
+                    showAlert('Unable to access microphone. Please check permissions.', 'error');
+                    console.error('Error accessing microphone:', err);
+                }
+            }
+        
+            // Send message
+            function addMessage(text) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                messageElement.textContent = text;
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        
+            // Clear chat
+            function clearChat() {
+                messagesContainer.innerHTML = '';
+                showAlert('Chat cleared!', 'info');
+            }
+        
+            // Add clear button to chat section
+            const chatHeader = document.querySelector('.chat-header');
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'clear-btn';
+            clearBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            `;
+            chatHeader.appendChild(clearBtn);
+        
+            // Event listeners
+            cameraBtn.addEventListener('click', toggleCamera);
+            micBtn.addEventListener('click', toggleMic);
+            clearBtn.addEventListener('click', clearChat);
+        
+            messageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+                if (message) {
+                    addMessage(message);
+                    messageInput.value = '';
+                }
+            });
+        
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+            });
+        
+            // Initial setup
+            videoElement.style.display = 'none';
+            checkDevicePermissions();
+        });
+    </script>
+</body>
+</html>

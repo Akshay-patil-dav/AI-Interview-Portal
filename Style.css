@@ -1,0 +1,290 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(to bottom right, #1a202c, #2d3748);
+    color: white;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Alert Styles */
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background-color: #48bb78;
+}
+
+.alert-error {
+    background-color: #f56565;
+}
+
+.alert-info {
+    background-color: #4299e1;
+}
+
+.alert.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #a0aec0;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Video Section */
+.video-section {
+    background: #1a202c;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.video-container {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+#videoElement {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5568;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.control-btn {
+    background: #3182ce;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.75rem;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.control-btn:hover {
+    background: #2c5282;
+}
+
+.control-btn.active {
+    background: #e53e3e;
+}
+
+.control-btn.active:hover {
+    background: #c53030;
+}
+
+/* Chat Section */
+.chat-section {
+    background: #1a202c;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chat-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+.clear-btn {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.clear-btn:hover {
+    color: #e53e3e;
+    background: rgba(229, 62, 62, 0.1);
+}
+
+.messages {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 0.5rem;
+}
+
+.message {
+    background: #2d3748;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.message-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.message-form input {
+    flex: 1;
+    background: #2d3748;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    outline: none;
+}
+
+.message-form input:focus {
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+}
+
+.message-form button {
+    background: #3182ce;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.message-form button:hover {
+    background: #2c5282;
+}
+
+/* Status Bar */
+.status-bar {
+    background: #1a202c;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    background: #48bb78;
+    border-radius: 9999px;
+    animation: pulse 2s infinite;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #e53e3e;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
